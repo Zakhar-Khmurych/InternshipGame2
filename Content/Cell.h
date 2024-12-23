@@ -1,12 +1,19 @@
 #pragma once
+#include "ICreature.h"
 
+class ICreature;
 
-class Cell
-{
-
+class Cell {
 public:
-	bool IsEmpty() {
+    ICreature* CellTaker = nullptr;
 
-	}
+    Cell() : CellTaker(nullptr) {}
+
+    bool IsEmpty() const {
+        return CellTaker == nullptr;
+    }
+
+    void RemoveCreature() {
+        CellTaker = nullptr;
+    }
 };
-

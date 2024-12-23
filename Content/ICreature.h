@@ -4,6 +4,9 @@
 #include "Player.h"
 #include <string>
 
+class Player;
+class Creature;
+
 class ICreature {
 public:
     virtual ~ICreature() = default;
