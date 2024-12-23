@@ -16,6 +16,7 @@ public:
         DamageDiceSize = 6;
         InitiativeModifier = 2;
         Cost = 1;
+        TextureAddress = "assets/necromancer.png";
     }
 };
 
@@ -30,6 +31,7 @@ public:
         DamageDiceSize = 6;
         InitiativeModifier = 0;
         Cost = 0;
+        TextureAddress = "assets/skeleton.png";
     }
 };
 
@@ -44,6 +46,7 @@ public:
         DamageDiceSize = 8;
         InitiativeModifier = 0;
         Cost = 1;
+        TextureAddress = "assets/knight.png";
     }
 };
 
@@ -58,6 +61,7 @@ public:
         DamageDiceSize = 12;
         InitiativeModifier = 2;
         Cost = 1;
+        TextureAddress = "assets/berserker.png";
     }
 };
 
@@ -72,6 +76,7 @@ public:
         DamageDiceSize = 24;
         InitiativeModifier = 4;
         Cost = 1;
+        TextureAddress = "assets/assassin.png";
     }
 };
 
@@ -86,6 +91,7 @@ public:
         DamageDiceSize = 8;
         InitiativeModifier = 4;
         Cost = 1;
+        TextureAddress = "assets/elf.png";
     }
 };
 
@@ -100,6 +106,7 @@ public:
         DamageDiceSize = 4;
         InitiativeModifier = 8;
         Cost = 1;
+        TextureAddress = "assets/goblin.png";
     }
 };
 
@@ -114,5 +121,6 @@ public:
         DamageDiceSize = 1;
         InitiativeModifier = 0;
         Cost = 0;
+        TextureAddress = "assets/wall.png";
     }
 };
