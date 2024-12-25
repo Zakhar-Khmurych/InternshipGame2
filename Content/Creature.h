@@ -7,14 +7,9 @@
 class Player;
 class Creature;
 
-class ICreature {
-public:
-    virtual ~ICreature() = default;
-};
 
 
-
-class Creature : public ICreature {
+class Creature {
 public:
     int HP;
     int CurrentHP;
@@ -29,22 +24,25 @@ public:
     int Initiative;
     int RelativeInitiative;
     int Cost;
+    int ID;
 
     Player* Owner;
     std::string TextureAddress;
 
-    void Punch(Creature& target) {
+    virtual ~Creature() = default;
+
+     virtual void Punch(Creature& target) {
         int attack_value = Attack + Dice(20).Roll(); // фіксоване влучання + к20
         if (attack_value > target.Defence) {
             target.HP -= (Damage + Dice(DamageDiceSize).Roll()); // шкода, фіксована + куб
         }
     }
 
-    void RollInitiative() {
+     virtual void RollInitiative() {
         Initiative = InitiativeModifier + Dice(20).Roll();
     }
 
-    int ResolveInitiative() {
+     virtual  int ResolveInitiative() {
         RelativeInitiative = Dice(100).Roll();
         return RelativeInitiative;
     }

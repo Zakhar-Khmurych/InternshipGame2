@@ -1,13 +1,10 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "Grid.h" 
+#include <iostream>
 
-class Player {
+class Grid;  
 
-};
-
-/*
 class Player {
 public:
     std::string Name;
@@ -21,23 +18,8 @@ public:
         Coins += reward;
     }
 
-    int FibonacciCost() const {
-        std::vector<int> fib = { 1, 1, 2, 3, 5, 8, 13, 21, 34, 55 };
-        size_t count = ActiveCreaturesByID.size();
-        return count < fib.size() ? fib[count] : fib.back();
-    }
+    int FibonacciCost() const;
 
     template <typename T>
-    void SummonCreature(Grid& grid) {
-        auto freeCells = grid.DijkstraXY(0, 0, 1);
-        if (!freeCells.empty() && Coins >= FibonacciCost()) {
-            T* creature = new T();
-            Coins -= creature->Cost * FibonacciCost();
-            ActiveCreaturesByID.push_back(creature->ID);
-            freeCells[0]->CellTaker = creature;
-            std::cout << "Summoned creature at (0, 0)\n";
-        }
-    }
+    void SummonCreature(Grid& grid);
 };
-
-*/

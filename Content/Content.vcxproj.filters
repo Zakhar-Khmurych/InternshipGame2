@@ -18,7 +18,7 @@
     <ClInclude Include="Cell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ICreature.h">
+    <ClInclude Include="Creature.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dice.h">

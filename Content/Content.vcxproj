@@ -145,7 +145,7 @@
     <ClInclude Include="Creatures.h" />
     <ClInclude Include="Dice.h" />
     <ClInclude Include="Grid.h" />
-    <ClInclude Include="ICreature.h" />
+    <ClInclude Include="Creature.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Session.h" />
   </ItemGroup>

@@ -1,5 +1,5 @@
 #pragma once
-#include "ICreature.h"
+#include "Creature.h"
 
 class Creatures
 {

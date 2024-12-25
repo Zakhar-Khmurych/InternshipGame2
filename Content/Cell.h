@@ -1,19 +1,25 @@
 #pragma once
-#include "ICreature.h"
+#include <optional>
+#include <functional>
 
-class ICreature;
+class Creature;
 
 class Cell {
 public:
-    ICreature* CellTaker = nullptr;
+    std::optional<std::reference_wrapper<Creature>> CellTaker;
 
-    Cell() : CellTaker(nullptr) {}
+    Cell() = default;
 
     bool IsEmpty() const {
-        return CellTaker == nullptr;
+        return !CellTaker.has_value();
+    }
+
+    void PlaceCreature(Creature& creature) {
+        CellTaker = creature;
     }
 
     void RemoveCreature() {
-        CellTaker = nullptr;
+        CellTaker.reset();
     }
 };
+
