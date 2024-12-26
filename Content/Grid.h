@@ -27,6 +27,15 @@ public:
         }
     }
 
+    void PlaceCreature(int x, int y, Creature& creature) {
+        if (IsValidPosition(x, y)) {
+            Cell& cell = GetCell(x, y);
+            if (cell.IsEmpty()) {
+                cell.CellTaker = creature;
+            }
+        }
+    }
+
     Cell& GetCell(int x, int y) {
         return Cells[x][y];
     }
@@ -63,6 +72,19 @@ public:
         }
 
         return reachableCells;
+    }
+
+    void RemoveDeadCreatures() {
+        for (int x = 0; x < Width; ++x) {
+            for (int y = 0; y < Height; ++y) {
+                if (Cells[x][y].CellTaker.has_value()) {
+                    Creature& creature = Cells[x][y].CellTaker.value();
+                    if (creature.HP < 1) {
+                        Cells[x][y].RemoveCreature();
+                    }
+                }
+            }
+        }
     }
 };
 

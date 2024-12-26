@@ -4,7 +4,9 @@
 enum class InputAction {
 	None,
 	Exit,
-    DoSomethingOnSpace
+    DoSomethingOnSpace,
+    SelectCell,
+    ChooseTargetCell,
 };
 
 

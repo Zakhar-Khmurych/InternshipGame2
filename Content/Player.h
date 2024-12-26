@@ -23,3 +23,8 @@ public:
     template <typename T>
     void SummonCreature(Grid& grid);
 };
+
+
+
+
+
