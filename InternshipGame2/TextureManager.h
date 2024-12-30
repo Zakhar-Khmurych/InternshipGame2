@@ -13,8 +13,10 @@ public:
     bool loadTexture(const std::string& name, const std::string& filePath) {
         sf::Texture texture;
         if (!texture.loadFromFile(filePath)) {
+            std::cerr << "Failed to load texture: " << filePath << std::endl;
             return false;
         }
+        std::cout << "Loaded texture: " << filePath << std::endl;
         textures[name] = std::move(texture);
         return true;
     }

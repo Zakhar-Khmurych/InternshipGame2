@@ -27,7 +27,7 @@ public:
     int ID;
 
     Player* Owner;
-    std::string TextureAddress;
+    std::string TextureName;
 
     virtual ~Creature() = default;
 

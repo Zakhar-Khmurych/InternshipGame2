@@ -10,8 +10,8 @@ public:
     Player Player2;
     Grid SessionGrid;
 
-    Session(Player p1, Player p2, int width, int height)
-        : Player1(p1), Player2(p2), SessionGrid(width, height) {}
+    Session(Player p1, Player p2, Grid session_grid)
+        : Player1(p1), Player2(p2), SessionGrid(session_grid) {}
 
     void PlaceNecromancers() {
         Necromancer* n1 = new Necromancer();

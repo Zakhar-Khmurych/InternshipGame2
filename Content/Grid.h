@@ -40,6 +40,10 @@ public:
         return Cells[x][y];
     }
 
+    const Cell& GetCell(int x, int y) const {
+        return Cells[y][x];
+    }
+
     std::vector<Cell*> DijkstraXY(int startX, int startY, int steps) {
         std::vector<Cell*> reachableCells;
         std::vector<std::vector<int>> distances(Width, std::vector<int>(Height, INT_MAX));
