@@ -16,7 +16,7 @@ public:
             std::cerr << "Failed to load texture: " << filePath << std::endl;
             return false;
         }
-        std::cout << "Loaded texture: " << filePath << std::endl;
+        //std::cout << "Loaded texture: " << filePath << std::endl;
         textures[name] = std::move(texture);
         return true;
     }
@@ -27,6 +27,7 @@ public:
             return it->second;
         }
         else {
+            std::cerr << "Texture not found: " << name << std::endl;
             return invalid;// for error texture
         }
     }
@@ -38,6 +39,23 @@ public:
             sf::Image image;
             image.create(100, 100, sf::Color::Magenta);
             invalid.update(image);
+        }
+    }
+
+    void initializeAll() {
+        std::vector<std::pair<std::string, std::string>> texturePaths = {
+            {"necromancer", "assets/necromancer.png"},
+            {"skeleton", "assets/skeleton.png"},
+            {"knight", "assets/knight.png"},
+            {"berserker", "assets/berserker.png"},
+            {"assassin", "assets/assassin.png"},
+            {"elf", "assets/elf.png"},
+            {"goblin", "assets/goblin.png"},
+            {"wall", "assets/wall.png"}
+        };
+
+        for (const auto& [name, path] : texturePaths) {
+            loadTexture(name, path);
         }
     }
 };

@@ -9,11 +9,9 @@ public:
 
 	};
 
-	void RunRound(Player p1, Player p2, Grid grid) {
+    void RunRound(Player& p1, Player& p2, Grid& grid) {
         p1.GiveCoin(1);
         p2.GiveCoin(1);
-
-        
 	};
 
 };

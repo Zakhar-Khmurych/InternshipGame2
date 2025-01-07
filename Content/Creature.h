@@ -29,20 +29,29 @@ public:
     Player* Owner;
     std::string TextureName;
 
+    Creature(std::string textureName, Player* owner)
+        : TextureName(std::move(textureName)), Owner(owner) {} //чи варто тут передавати щось, крім власника?
+
     virtual ~Creature() = default;
 
-     virtual void Punch(Creature& target) {
+    static inline const std::string TypeName = "creature";
+
+    virtual std::string GetTextureName() const {
+        return TextureName;  // Базове ім'я для Creature
+    }
+
+    virtual void Punch(Creature& target) {
         int attack_value = Attack + Dice(20).Roll(); // фіксоване влучання + к20
         if (attack_value > target.Defence) {
             target.HP -= (Damage + Dice(DamageDiceSize).Roll()); // шкода, фіксована + куб
         }
     }
 
-     virtual void RollInitiative() {
+    virtual void RollInitiative() {
         Initiative = InitiativeModifier + Dice(20).Roll();
     }
 
-     virtual  int ResolveInitiative() {
+    virtual  int ResolveInitiative() {
         RelativeInitiative = Dice(100).Roll();
         return RelativeInitiative;
     }

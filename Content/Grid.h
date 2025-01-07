@@ -5,8 +5,6 @@
 #include <queue>
 
 
-
-
 class Grid {
 public:
     int Width;
@@ -18,7 +16,7 @@ public:
     }
 
     bool IsValidPosition(int x, int y) const {
-        return x >= 0 && x < Width && y >= 0 && y < Height;
+        return x >= 0 && x < Width&& y >= 0 && y < Height;
     }
 
     void RemoveCreature(int x, int y) {
@@ -27,7 +25,7 @@ public:
         }
     }
 
-    void PlaceCreature(int x, int y, Creature& creature) {
+    void PlaceCreature(int x, int y, std::shared_ptr<Creature> creature) {
         if (IsValidPosition(x, y)) {
             Cell& cell = GetCell(x, y);
             if (cell.IsEmpty()) {
@@ -41,7 +39,7 @@ public:
     }
 
     const Cell& GetCell(int x, int y) const {
-        return Cells[y][x];
+        return Cells[x][y];
     }
 
     std::vector<Cell*> DijkstraXY(int startX, int startY, int steps) {
@@ -81,9 +79,9 @@ public:
     void RemoveDeadCreatures() {
         for (int x = 0; x < Width; ++x) {
             for (int y = 0; y < Height; ++y) {
-                if (Cells[x][y].CellTaker.has_value()) {
-                    Creature& creature = Cells[x][y].CellTaker.value();
-                    if (creature.HP < 1) {
+                if (Cells[x][y].CellTaker) { // Check if shared_ptr is not null
+                    auto creature = Cells[x][y].CellTaker; // Copy shared_ptr
+                    if (creature->HP < 1) { // Access HP via shared_ptr
                         Cells[x][y].RemoveCreature();
                     }
                 }
@@ -91,7 +89,6 @@ public:
         }
     }
 };
-
 
 /*
 class Grid {

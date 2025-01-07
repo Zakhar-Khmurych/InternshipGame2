@@ -27,70 +27,77 @@ class WindowRenderer {
     GameHandler* gameHandler;
     TextureManager textureManager;
 
-
 public:
     WindowRenderer(int width, int height, InputHandler* input_handler, GameHandler* game_handler)
         : window_width(width), window_height(height), inputHandler(input_handler), gameHandler(game_handler)
     {
-        
-  
     }
 
-    void LoadAllCreatureTextures(TextureManager& textureManager) {
-        textureManager.loadTexture("necromancer", "assets/necromancer.png");
-        textureManager.loadTexture("skeleton", "assets/skeleton.png");
-        textureManager.loadTexture("knight", "assets/knight.png");
-        textureManager.loadTexture("berserker", "assets/berserker.png");
-        textureManager.loadTexture("assassin", "assets/assassin.png");
-        textureManager.loadTexture("elf", "assets/elf.png");
-        textureManager.loadTexture("goblin", "assets/goblin.png");
-        textureManager.loadTexture("wall", "assets/wall.png");
-    }
-    
-
-    void RunTheGame() {       
+    void RunTheGame() {
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Internship game");
         sf::Clock clock;
-        sf::Time elapsed = clock.restart();
-        Grid currentGrid = gameHandler->GetGrid();
-        std::cout << "Grid Width: " << currentGrid.Width << " Grid Height: " << currentGrid.Height << std::endl;
-        
+        Grid* currentGrid = gameHandler->GetGrid();
+
+        if (!currentGrid) {
+            std::cerr << "Error: currentGrid is nullptr!" << std::endl;
+            return;
+        }
+        if (currentGrid->Width == 0 || currentGrid->Height == 0) {
+            std::cerr << "Error: Grid size is invalid (0)!" << std::endl;
+            return;
+        }
+
+        std::cout << "Grid Width: " << currentGrid->Width << " Grid Height: " << currentGrid->Height << std::endl;
+
         textureManager.initializeInvalidTexture();
-        LoadAllCreatureTextures(textureManager);
+        textureManager.initializeAll();
 
         while (window.isOpen()) {
 
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    window.close();
+                }
+            }
+
             InputAction action = inputHandler->processInput(window);
             if (action == InputAction::Exit) {
+                window.close();
                 break;
             }
+
             sf::Time elapsed = clock.restart();
             float deltaTime = elapsed.asSeconds();
             window.clear();
 
             currentGrid = gameHandler->GetGrid();
-            std::cout << "Grid Width: " << currentGrid.Width << " Grid Height: " << currentGrid.Height << std::endl;
-            
-            RenderTheField(window, currentGrid);
-            HighlightPlayerCreatures(window, currentGrid);
+            if (!currentGrid) {
+                std::cerr << "Error: currentGrid is nullptr during game loop!" << std::endl;
+                break;
+            }
 
+            std::cout << "Grid Width: " << currentGrid->Width << " Grid Height: " << currentGrid->Height << std::endl;
+
+            RenderTheField(window, *currentGrid);
+            HighlightPlayerCreatures(window, *currentGrid);
 
             window.display();
         }
     }
 
     void RenderTheField(sf::RenderWindow& window, const Grid& grid) {
-        const int cellGap = 5;  // Статичний проміжок між клітинками
-        int cellSize = static_cast<int>(std::min(window.getSize().x / grid.Width, window.getSize().y / grid.Height)) - cellGap;
-       
-        // Відображення сітки
+        const float cellGap = 5.0f;
+        float cellSize = static_cast<float>(std::min(window.getSize().x / grid.Width, window.getSize().y / grid.Height)) - cellGap;
+
         for (int x = 0; x < grid.Width; ++x) {
             for (int y = 0; y < grid.Height; ++y) {
                 sf::RectangleShape cellShape(sf::Vector2f(cellSize, cellSize));
-                cellShape.setFillColor(sf::Color(200, 200, 200, 100));  // Світло-сірий колір клітинки
+                cellShape.setFillColor(sf::Color(200, 200, 200, 100));
 
-                int posX = x * (cellSize + cellGap);
-                int posY = y * (cellSize + cellGap);
+                float posX = static_cast<float>(x) * (cellSize + cellGap);
+                float posY = static_cast<float>(y) * (cellSize + cellGap);
+
                 cellShape.setPosition(posX, posY);
 
                 window.draw(cellShape);
@@ -99,38 +106,38 @@ public:
     }
 
     void HighlightPlayerCreatures(sf::RenderWindow& window, const Grid& grid) {
-        const int cellGap = 5;
-        int cellSize = static_cast<int>(std::min(window.getSize().x / grid.Width, window.getSize().y / grid.Height)) - cellGap;
+        const float cellGap = 5.0f;
+        float cellSize = static_cast<float>(std::min(window.getSize().x / grid.Width, window.getSize().y / grid.Height)) - cellGap;
 
         for (int x = 0; x < grid.Width; ++x) {
             for (int y = 0; y < grid.Height; ++y) {
                 const Cell& cell = grid.GetCell(x, y);
 
-                if (!cell.IsEmpty()) {
-                    Creature& creature = cell.CellTaker->get();
+                if (!cell.IsEmpty() && cell.CellTaker) {
+                    std::shared_ptr<Creature> creaturePtr = cell.CellTaker;
+                    Creature& creature = *creaturePtr;
 
                     sf::RectangleShape cellShape(sf::Vector2f(cellSize, cellSize));
-                    cellShape.setPosition(x * (cellSize + cellGap), y * (cellSize + cellGap));
+                    cellShape.setPosition(static_cast<float>(x) * (cellSize + cellGap),
+                        static_cast<float>(y) * (cellSize + cellGap));
 
-                    // Застосування текстури
-                    cellShape.setTexture(&textureManager.getTexture(creature.TextureName));
-
-                    // Накладання кольору
-                    if (creature.Owner == gameHandler->p1) {
-                        cellShape.setFillColor(sf::Color(255, 0, 0, 250));  // Напівпрозорий червоний
+                    if (creature.TextureName.empty()) {
+                        std::cerr << "Creature texture name is empty!" << std::endl;
+                        cellShape.setTexture(&textureManager.getTexture("invalid"));
                     }
-                    else if (creature.Owner == gameHandler->p2) 
-                    {
-                        cellShape.setFillColor(sf::Color(0, 0, 255, 250));  // Напівпрозорий синій
+                    else {
+                        cellShape.setTexture(&textureManager.getTexture(creature.TextureName));
+                    }
+
+                    if (creature.Owner == gameHandler->p1.get()) {
+                        cellShape.setFillColor(sf::Color(255, 0, 0, 255));
+                    }
+                    else if (creature.Owner == gameHandler->p2.get()) {
+                        cellShape.setFillColor(sf::Color(0, 0, 255, 255));
                     }
                     window.draw(cellShape);
                 }
             }
         }
     }
-
-
 };
-
-
-

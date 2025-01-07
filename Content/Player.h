@@ -20,8 +20,8 @@ public:
 
     int FibonacciCost() const;
 
-    template <typename T>
-    void SummonCreature(Grid& grid);
+   // template <typename T>
+   // void SummonCreature(Grid& grid, const std::string& type, int x, int y);
 };
 
 

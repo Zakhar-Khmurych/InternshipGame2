@@ -6,27 +6,31 @@
 
 class Session {
 public:
-    Player Player1;
-    Player Player2;
-    Grid SessionGrid;
+    Player& player1;
+    Player& player2;
+    Grid& SessionGrid;
 
-    Session(Player p1, Player p2, Grid session_grid)
-        : Player1(p1), Player2(p2), SessionGrid(session_grid) {}
+    Session(Player& p1, Player& p2, Grid& session_grid)
+        : player1(p1), player2(p2), SessionGrid(session_grid) {}
 
     void PlaceNecromancers() {
-        Necromancer* n1 = new Necromancer();
-        
-        Necromancer* n2 = new Necromancer();
+        auto necromancer1 = std::make_shared<Necromancer>(&player1);
+        auto necromancer2 = std::make_shared<Necromancer>(&player2);
 
-        Player1.ActiveCreaturesByID.push_back(n1->ID);
-        Player2.ActiveCreaturesByID.push_back(n2->ID);
+        player1.ActiveCreaturesByID.push_back(necromancer1->ID);
+        player2.ActiveCreaturesByID.push_back(necromancer2->ID);
 
-        Player1.NecromancerID = n1->ID;
-        Player2.NecromancerID = n2->ID;
+        player1.NecromancerID = necromancer1->ID;
+        player2.NecromancerID = necromancer2->ID;
 
-        SessionGrid.PlaceCreature(0, 0, *n1);
-        SessionGrid.PlaceCreature(SessionGrid.Width - 1, SessionGrid.Height - 1, *n2);
+        SessionGrid.PlaceCreature(0, 0, necromancer1);
+        SessionGrid.PlaceCreature(SessionGrid.Width - 1, SessionGrid.Height - 1, necromancer2);
+    }
+
+    void PlayRound() {
+
     }
 };
+
 
 
