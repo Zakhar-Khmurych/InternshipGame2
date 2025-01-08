@@ -2,6 +2,7 @@
 #include "Grid.h" 
 #include "Creatures.h" 
 
+
 int Player::FibonacciCost() const {
     std::vector<int> fib = { 1, 1, 2, 3, 5, 8, 13, 21, 34, 55 };
     size_t count = ActiveCreaturesByID.size();

@@ -18,7 +18,7 @@ public:
         current_session = std::make_unique<Session>(*p1, *p2, *_grid);
 
         std::cout << "Placing necromancers..." << std::endl;
-        current_session->PlaceNecromancers();
+        current_session->StartSession();
 
         for (int x = 0; x < _grid->Width; ++x) {
             for (int y = 0; y < _grid->Height; ++y) {

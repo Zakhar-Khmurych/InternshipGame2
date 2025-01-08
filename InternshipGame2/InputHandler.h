@@ -4,9 +4,17 @@
 enum class InputAction {
 	None,
 	Exit,
-    DoSomethingOnSpace,
     SelectCell,
-    ChooseTargetCell,
+    RequestCellSelection,
+    StartTurn,
+    EndTurn,
+    SkipTurn,
+    StartRound,
+    EndRound,
+    ChooseCreature,
+    StartSession,
+    EndSession,
+    DoSomethingOnSpace
 };
 
 

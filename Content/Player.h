@@ -10,7 +10,9 @@ public:
     std::string Name;
     int Coins = 0;
     long NecromancerID;
-    std::vector<long> ActiveCreaturesByID;
+   std::vector<long> ActiveCreaturesByID;
+
+
 
     Player(const std::string& name) : Name(name) {}
 
