@@ -1,45 +1,34 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-
-enum class InputAction {
-	None,
-	Exit,
-    SelectCell,
-    RequestCellSelection,
-    StartTurn,
-    EndTurn,
-    SkipTurn,
-    StartRound,
-    EndRound,
-    ChooseCreature,
-    StartSession,
-    EndSession,
-    DoSomethingOnSpace
-};
-
+#include "../Content/GameEvents.h"
 
 class InputHandler {
 public:
-	virtual ~InputHandler() = default;
+    virtual ~InputHandler() = default;
 
-	virtual InputAction processInput(sf::RenderWindow& window) = 0;
+    virtual GameEvent processInput(sf::RenderWindow& window) = 0;
 };
 
 class GameInput : public InputHandler {
-    InputAction processInput(sf::RenderWindow& window) override {
+    GameEventManager& eventManager;
+
+public:
+    GameInput(GameEventManager& manager) : eventManager(manager) {}
+
+    GameEvent processInput(sf::RenderWindow& window) override {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
-                return InputAction::Exit;
+                eventManager.AddEvent(GameEvent::Exit);
+                return GameEvent::Exit;
             }
-            
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            return InputAction::DoSomethingOnSpace;
+            eventManager.AddEvent(GameEvent::DoSomethingOnSpace);
+            return GameEvent::DoSomethingOnSpace;
         }
- 
 
-        return InputAction::None;
+        return GameEvent::None;
     }
 };

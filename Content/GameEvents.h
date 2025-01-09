@@ -3,20 +3,12 @@
 
 enum class GameEvent {
     None,
-    SelectCell,
-    RequestCellSelection,
     StartTurn,
     EndTurn,
-    SkipTurn,
-    StartRound,
-    EndRound,
-    ChooseCreature,
-    StartSession,
-    EndSession,
-    DoSomethingOnSpace,
-    Exit
+    SelectCell,
+    Exit,
+    DoSomethingOnSpace
 };
-
 
 class GameEventManager {
     std::queue<GameEvent> eventQueue;

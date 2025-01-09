@@ -25,6 +25,8 @@ public:
     int RelativeInitiative;
     int Cost;
     int ID;
+    int CurrentX;
+    int CurrentY;
 
     Player* Owner;
     std::string TextureName;
@@ -55,4 +57,9 @@ public:
         RelativeInitiative = Dice(100).Roll();
         return RelativeInitiative;
     }
+
+    virtual void ResetMovement() {
+        MovementRemaining = Movement; // Відновлює доступний рух
+    }
+
 };

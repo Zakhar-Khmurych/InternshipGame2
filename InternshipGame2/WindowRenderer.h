@@ -61,14 +61,16 @@ public:
                 }
             }
 
-            InputAction action = inputHandler->processInput(window);
-            if (action == InputAction::Exit) {
+            GameEvent action = inputHandler->processInput(window);
+            if (action == GameEvent::Exit) {
                 window.close();
                 break;
             }
 
             sf::Time elapsed = clock.restart();
             float deltaTime = elapsed.asSeconds();
+
+            gameHandler->UpdateGame();
             window.clear();
 
             currentGrid = gameHandler->GetGrid();
@@ -77,7 +79,7 @@ public:
                 break;
             }
 
-            std::cout << "Grid Width: " << currentGrid->Width << " Grid Height: " << currentGrid->Height << std::endl;
+            //std::cout << "Grid Width: " << currentGrid->Width << " Grid Height: " << currentGrid->Height << std::endl;
 
             RenderTheField(window, *currentGrid);
             HighlightPlayerCreatures(window, *currentGrid);

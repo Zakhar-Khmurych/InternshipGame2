@@ -9,7 +9,9 @@ int main()
 {
 
     std::cout << "Hello World!\n";
-    GameInput gameInputHandler;
+
+    GameEventManager eventManager;
+    GameInput gameInputHandler(eventManager);
     GameHandler gameHandler;
     WindowRenderer renderer = WindowRenderer(1400, 900, &gameInputHandler, &gameHandler);
     renderer.RunTheGame();

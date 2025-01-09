@@ -35,5 +35,11 @@ public:
     Grid* GetGrid() {
         return current_session ? &current_session->SessionGrid : nullptr;
     }
+
+    void UpdateGame() {
+        if (current_session) {
+            current_session->UpdateSession();
+        }
+    }
 };
 

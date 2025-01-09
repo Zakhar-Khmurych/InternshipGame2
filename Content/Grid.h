@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include "Cell.h"
 #include "Creature.h"
 #include <vector>
@@ -88,6 +89,33 @@ public:
             }
         }
     }
+
+    void RollInitiativeForAll() {
+        for (int x = 0; x < Width; ++x) {
+            for (int y = 0; y < Height; ++y) {
+                auto creature = Cells[x][y].CellTaker;
+                if (creature) {
+                    creature->RollInitiative();
+                }
+            }
+        }
+    }
+
+    std::vector<std::shared_ptr<Creature>> GetAllCreatures() const {
+        std::vector<std::shared_ptr<Creature>> creatures;
+
+        for (int x = 0; x < Width; ++x) {
+            for (int y = 0; y < Height; ++y) {
+                auto creature = Cells[x][y].CellTaker;
+                if (creature) {
+                    creatures.push_back(creature);
+                }
+            }
+        }
+        return creatures;
+    }
+
+
 };
 
 /*
