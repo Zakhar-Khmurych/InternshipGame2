@@ -5,7 +5,6 @@
 #include <fstream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include "InputHandler.h"
 #include "TextureManager.h"
 #include "GameHandler.h"
 
@@ -23,13 +22,13 @@ class WindowRenderer {
 
     int window_width;
     int window_height;
-    InputHandler* inputHandler;
+    //InputHandler* inputHandler;
     GameHandler* gameHandler;
     TextureManager textureManager;
 
 public:
-    WindowRenderer(int width, int height, InputHandler* input_handler, GameHandler* game_handler)
-        : window_width(width), window_height(height), inputHandler(input_handler), gameHandler(game_handler)
+    WindowRenderer(int width, int height, GameHandler* game_handler)
+        : window_width(width), window_height(height), gameHandler(game_handler)
     {
     }
 
@@ -61,7 +60,7 @@ public:
                 }
             }
 
-            GameEvent action = inputHandler->processInput(window);
+            GameEvent action = gameHandler->ProcessInput(window);
             if (action == GameEvent::Exit) {
                 window.close();
                 break;
@@ -143,3 +142,4 @@ public:
         }
     }
 };
+

@@ -5,6 +5,9 @@
 #include <functional>
 #include <vector>
 #include <queue>
+#include "GameEvents.h"
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Sleep.hpp>
 
 struct CreatureInitiativeComparator {
     bool operator()(const std::shared_ptr<Creature>& a, const std::shared_ptr<Creature>& b) const {
@@ -18,6 +21,7 @@ struct CreatureInitiativeComparator {
 class Session {
     int round_number;
     bool isSessionActive = true;
+    GameEventManager& eventManager;
 public:
     Player& player1;
     Player& player2;
@@ -26,8 +30,8 @@ public:
         std::vector<std::shared_ptr<Creature>>,
         CreatureInitiativeComparator> InitiativeQueue;
 
-    Session(Player& p1, Player& p2, Grid& session_grid)
-        : player1(p1), player2(p2), SessionGrid(session_grid) {}
+    Session(Player& p1, Player& p2, Grid& session_grid, GameEventManager& event_manager)
+        : player1(p1), player2(p2), SessionGrid(session_grid), eventManager(event_manager){}
 
     void StartSession() {
         auto necromancer1 = std::make_shared<Necromancer>(&player1);
@@ -52,7 +56,7 @@ public:
 
         //std::cout << "Round " << round_number << std::endl;
         round_number++;
-        PlayRound();
+        //PlayRound();
 
         auto winners = CheckDefeatConditions();
         if (!winners.empty()) {
@@ -64,8 +68,43 @@ public:
     }
 
     void PlayRound() {
+
+        std::cout << "Starting round" << round_number << "...\n";
         //check win-lose condition (incoming)
         //give coins
+        player1.GiveCoin(1);
+        player2.GiveCoin(1);
+
+        for (Player* player : { &player1, &player2 }) {
+            std::cout << player->Name << ", choose a creature to summon or skip:\n";
+
+            //а може не 
+            bool turnFinished = false;
+            while (!turnFinished) {
+                if (eventManager.HasEvents()) {
+                    GameEvent event = eventManager.GetNextEvent();
+                    std::cout << "Processing event: " << static_cast<int>(event) << std::endl;
+                    switch (event) {
+                    case GameEvent::SelectCell:
+                        std::cout << player->Name << " selected a cell.\n";
+                        turnFinished = true;
+                        break;
+                    case GameEvent::SkipTurn:
+                        std::cout << player->Name << " skipped the turn.\n";
+                        turnFinished = true;
+                        break;
+                    default:
+                        std::cout << "Unknown event.\n";
+                        break;
+                    }
+                }
+                else {
+                    std::cout << "sleep";
+                    sf::sleep(sf::milliseconds(500));  // Затримка на 100 мс
+                }
+            }
+        }
+
         /*
         for each player:
             cout << choose creature
@@ -76,6 +115,7 @@ public:
         //roll initiative for all creatures
         //resolve initiative
         //add all creatures to queue accordingly to initiative
+        InitializeInitiativeQueue();
         //for each creature in queue:
             //run round
 

@@ -18,6 +18,7 @@ public:
 
     void GiveCoin(int reward) {
         Coins += reward;
+        std::cout << Name << " coins " << Coins << std::endl;
     }
 
     int FibonacciCost() const;

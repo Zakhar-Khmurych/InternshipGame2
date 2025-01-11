@@ -2,6 +2,7 @@
 #include "../Content/Grid.h"
 #include "../Content/Session.h"
 #include <memory>
+#include <SFML/Graphics.hpp>
 
 class GameHandler
 {
@@ -10,12 +11,14 @@ public:
     std::unique_ptr<Player> p1;
     std::unique_ptr<Player> p2;
     std::unique_ptr<Session> current_session;
+    GameEventManager& event_manager;
 
-    GameHandler() {
+    GameHandler(GameEventManager& manager)
+        : event_manager(manager) {
         _grid = std::make_unique<Grid>(10, 10);
         p1 = std::make_unique<Player>("player 1");
         p2 = std::make_unique<Player>("player 2");
-        current_session = std::make_unique<Session>(*p1, *p2, *_grid);
+        current_session = std::make_unique<Session>(*p1, *p2, *_grid, event_manager);
 
         std::cout << "Placing necromancers..." << std::endl;
         current_session->StartSession();
@@ -41,5 +44,28 @@ public:
             current_session->UpdateSession();
         }
     }
+
+    GameEvent ProcessInput(sf::RenderWindow& window) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                event_manager.AddEvent(GameEvent::Exit);
+                return GameEvent::Exit;
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+            event_manager.AddEvent(GameEvent::SelectCell);
+            return GameEvent::SelectCell;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+            event_manager.AddEvent(GameEvent::SkipTurn);
+            return GameEvent::SkipTurn;
+        }
+
+        return GameEvent::None;
+    }
+
 };
 

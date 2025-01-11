@@ -11,9 +11,8 @@ int main()
     std::cout << "Hello World!\n";
 
     GameEventManager eventManager;
-    GameInput gameInputHandler(eventManager);
-    GameHandler gameHandler;
-    WindowRenderer renderer = WindowRenderer(1400, 900, &gameInputHandler, &gameHandler);
+    GameHandler gameHandler(eventManager);
+    WindowRenderer renderer = WindowRenderer(1400, 900, &gameHandler);
     renderer.RunTheGame();
 
 }

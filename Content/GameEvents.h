@@ -6,6 +6,7 @@ enum class GameEvent {
     StartTurn,
     EndTurn,
     SelectCell,
+    SkipTurn,
     Exit,
     DoSomethingOnSpace
 };
