@@ -56,7 +56,7 @@ public:
 
         //std::cout << "Round " << round_number << std::endl;
         round_number++;
-        //PlayRound();
+        PlayRound();
 
         auto winners = CheckDefeatConditions();
         if (!winners.empty()) {
@@ -68,6 +68,61 @@ public:
     }
 
     void PlayRound() {
+        if (!eventManager.HasEvents()) {
+            std::cout << "No events to process. Skipping round " << round_number << ".\n";
+            return;
+        }
+
+        std::cout << "Starting round " << round_number << "...\n";
+        // Додаємо монети гравцям
+        player1.GiveCoin(1);
+        player2.GiveCoin(1);
+
+        for (Player* player : { &player1, &player2 }) {
+            std::cout << player->Name << ", choose a creature to summon or skip:\n";
+
+            bool turnFinished = false;
+            while (!turnFinished) {
+                if (eventManager.HasEvents()) {
+                    GameEvent event = eventManager.GetNextEvent();
+                    std::cout << "Processing event: " << static_cast<int>(event) << std::endl;
+                    switch (event) {
+                    case GameEvent::SelectCell:
+                        std::cout << player->Name << " selected a cell.\n";
+                        turnFinished = true;
+                        break;
+                    case GameEvent::SkipTurn:
+                        std::cout << player->Name << " skipped the turn.\n";
+                        turnFinished = true;
+                        break;
+                    default:
+                        std::cout << "Unknown event.\n";
+                        break;
+                    }
+                }
+                else {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
+            }
+        }
+
+        InitializeInitiativeQueue();
+
+        /*
+        while (!InitiativeQueue.empty()) {
+            auto currentCreature = InitiativeQueue.top();
+            InitiativeQueue.pop();
+
+            if (currentCreature->HP > 0) {
+                PlayTurn();
+            }
+        }
+        */
+    }
+
+
+    void PlayRound2() {
+
 
         std::cout << "Starting round" << round_number << "...\n";
         //check win-lose condition (incoming)
@@ -78,6 +133,8 @@ public:
         for (Player* player : { &player1, &player2 }) {
             std::cout << player->Name << ", choose a creature to summon or skip:\n";
 
+            size_t maxWaitIterations = 10; // Максимальна кількість спроб
+            size_t currentIteration = 0;
             //а може не 
             bool turnFinished = false;
             while (!turnFinished) {
@@ -99,8 +156,12 @@ public:
                     }
                 }
                 else {
-                    std::cout << "sleep";
-                    sf::sleep(sf::milliseconds(500));  // Затримка на 100 мс
+                   // std::cout << "Waiting for event...\n";
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    if (++currentIteration > maxWaitIterations) {
+                     //   std::cerr << "No events received. Breaking loop to avoid infinite wait.\n";
+                        break;
+                    }
                 }
             }
         }
@@ -115,7 +176,13 @@ public:
         //roll initiative for all creatures
         //resolve initiative
         //add all creatures to queue accordingly to initiative
+        
+        
+        
         InitializeInitiativeQueue();
+
+
+
         //for each creature in queue:
             //run round
 

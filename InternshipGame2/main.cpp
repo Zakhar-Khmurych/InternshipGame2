@@ -12,8 +12,12 @@ int main()
 
     GameEventManager eventManager;
     GameHandler gameHandler(eventManager);
-    WindowRenderer renderer = WindowRenderer(1400, 900, &gameHandler);
+    gameHandler.StartGameThread();
+
+    WindowRenderer renderer(1400, 900, &gameHandler);
     renderer.RunTheGame();
+
+    gameHandler.StopGameThread();
 
 }
 

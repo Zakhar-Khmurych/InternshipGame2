@@ -3,15 +3,63 @@
 #include "../Content/Session.h"
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include <thread>
+#include <atomic>
+#include <condition_variable>
+
 
 class GameHandler
 {
+    void GameLoop() {
+        while (isRunning) {
+            std::unique_lock<std::mutex> lock(eventMutex);
+            eventCondition.wait(lock, [this]() {
+                return event_manager.HasEvents() || !isRunning;
+                });
+
+            if (!isRunning) break;
+
+            // Обробка подій
+            if (event_manager.HasEvents()) {
+                auto event = event_manager.GetNextEvent();
+                HandleEvent(event);
+            }
+
+            // Виклик логіки гри
+            UpdateGame();
+        }
+    }
+
+    void HandleEvent(GameEvent event) {
+        // Обробка події
+    }
+
 public:
     std::unique_ptr<Grid> _grid;
     std::unique_ptr<Player> p1;
     std::unique_ptr<Player> p2;
     std::unique_ptr<Session> current_session;
     GameEventManager& event_manager;
+
+    std::thread gameThread;
+    std::atomic<bool> isRunning{ true };
+    std::mutex eventMutex;
+    std::condition_variable eventCondition;
+    ~GameHandler() {
+        StopGameThread();
+    }
+    void StartGameThread() {
+        gameThread = std::thread([this]() { GameLoop(); });
+    }
+    void StopGameThread() {
+        isRunning = false;
+        eventCondition.notify_all();
+        if (gameThread.joinable()) {
+            gameThread.join();
+        }
+    }
+
+
 
     GameHandler(GameEventManager& manager)
         : event_manager(manager) {
@@ -55,14 +103,21 @@ public:
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+            std::lock_guard<std::mutex> lock(eventMutex);
             event_manager.AddEvent(GameEvent::SelectCell);
+            eventCondition.notify_one();
             return GameEvent::SelectCell;
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+            std::lock_guard<std::mutex> lock(eventMutex);
             event_manager.AddEvent(GameEvent::SkipTurn);
+            eventCondition.notify_one();
             return GameEvent::SkipTurn;
         }
+        std::lock_guard<std::mutex> lock(eventMutex);
+        event_manager.AddEvent(GameEvent::None);
+        eventCondition.notify_one();
 
         return GameEvent::None;
     }
