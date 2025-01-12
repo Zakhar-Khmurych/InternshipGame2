@@ -23,7 +23,7 @@ public:
         current_session = std::make_unique<Session>(*p1, *p2, *_grid);
 
         current_session->StartSession();
-        current_session->PlayRound();
+        //current_session->PlayRound();
     }
     Grid* GetGrid() const {
         return _grid.get();

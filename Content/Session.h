@@ -55,9 +55,11 @@ public:
     void PlayRound() {
         player1.GiveCoin(1);
         player2.GiveCoin(1);
+        std::cout << "Gave coins to" << player1.Name << " and " << player2.Name << std::endl;
+        std::cout << "waiting for action" << std::endl;
         while (true)
         {
-            std::cout << "waiting for action" << std::endl;
+            
         }
         //for each player
         //wait for action
