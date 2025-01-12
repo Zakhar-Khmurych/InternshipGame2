@@ -6,6 +6,7 @@
 #include <SFML/Audio.hpp>
 #include "TextureManager.h"
 #include "GameHandler.h"
+#include "InputHandler.h"
 
 class WindowRenderer {
 
@@ -13,6 +14,7 @@ class WindowRenderer {
     int window_height;
     GameHandler* gameHandler;
     TextureManager textureManager;
+    InputHandler inputHandler;
 
 public:
     WindowRenderer(int width, int height, GameHandler* game_handler)
@@ -37,7 +39,7 @@ public:
             }
 
            
-           GameEvent action = gameHandler->ProcessInput(window);
+           GameEvent action = inputHandler.ProcessInput(window);
             if (action == GameEvent::Exit) {
                 window.close();
                 break;
