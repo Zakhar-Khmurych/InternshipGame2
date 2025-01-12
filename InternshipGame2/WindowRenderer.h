@@ -92,31 +92,42 @@ public:
             for (int y = 0; y < grid.Height; ++y) {
                 const Cell& cell = grid.GetCell(x, y);
 
+                // якщо кл≥тинка не порожн€ (на н≥й Ї ≥стота)
                 if (!cell.IsEmpty() && cell.CellTaker) {
                     std::shared_ptr<Creature> creaturePtr = cell.CellTaker;
                     Creature& creature = *creaturePtr;
 
+                    // —творюЇмо квадрат дл€ в≥дображенн€ кл≥тинки
                     sf::RectangleShape cellShape(sf::Vector2f(cellSize, cellSize));
                     cellShape.setPosition(static_cast<float>(x) * (cellSize + cellGap),
                         static_cast<float>(y) * (cellSize + cellGap));
 
+                    // якщо у ≥стоти Ї текстура, використаЇмо њњ
                     if (creature.TextureName.empty()) {
                         std::cerr << "Creature texture name is empty!" << std::endl;
-                        cellShape.setTexture(&textureManager.getTexture("invalid"));
+                        cellShape.setTexture(&textureManager.getTexture("invalid")); // якщо текстура пуста, ставимо "invalid"
                     }
                     else {
                         cellShape.setTexture(&textureManager.getTexture(creature.TextureName));
                     }
 
+                    // ¬изначаЇмо кольори дл€ гравц≥в
                     if (creature.Owner == gameHandler->p1.get()) {
-                        cellShape.setFillColor(sf::Color(255, 0, 0, 255));
+                        cellShape.setFillColor(sf::Color(255, 0, 0, 255)); // „ервоний дл€ першого гравц€
                     }
                     else if (creature.Owner == gameHandler->p2.get()) {
-                        cellShape.setFillColor(sf::Color(0, 0, 255, 255));
+                        cellShape.setFillColor(sf::Color(0, 0, 255, 255)); // —ин≥й дл€ другого гравц€
                     }
+
+                    // ћалюЇмо кл≥тинку з ≥стотою
                     window.draw(cellShape);
+                }
+                else {
+                    // якщо кл≥тинка порожн€, не малюЇмо н≥чого
+                    continue;
                 }
             }
         }
     }
+
 };
