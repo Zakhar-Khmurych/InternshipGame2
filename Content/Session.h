@@ -3,6 +3,8 @@
 #include "Grid.h"
 #include "Creatures.h"
 #include <functional>
+#include <iostream>
+
 #include <vector>
 #include <queue>
 #include "GameEvents.h"
@@ -53,7 +55,10 @@ public:
     void PlayRound() {
         player1.GiveCoin(1);
         player2.GiveCoin(1);
-
+        while (true)
+        {
+            std::cout << "waiting for action" << std::endl;
+        }
         //for each player
         //wait for action
         //only when actions receieved, go on

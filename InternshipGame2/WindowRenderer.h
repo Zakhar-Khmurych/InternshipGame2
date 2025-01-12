@@ -20,7 +20,7 @@ public:
     WindowRenderer(int width, int height, GameHandler* game_handler)
         : window_width(width), window_height(height), gameHandler(game_handler) {}
 
-    void RunTheGame() {
+    void RenderGame() {
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Internship game");
         sf::Clock clock;
         Grid* currentGrid = gameHandler->GetGrid();
