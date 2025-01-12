@@ -12,16 +12,16 @@
 struct CreatureInitiativeComparator {
     bool operator()(const std::shared_ptr<Creature>& a, const std::shared_ptr<Creature>& b) const {
         if (a->Initiative == b->Initiative) {
-            return a->ResolveInitiative() < b->ResolveInitiative();  // tie-breaker
+            return a->ResolveInitiative() < b->ResolveInitiative(); // tie-breaker
         }
-        return a->Initiative < b->Initiative;  // спадаюча ініціатива
+        return a->Initiative < b->Initiative; // descending initiative
     }
 };
 
 class Session {
     int round_number;
     bool isSessionActive = true;
-    GameEventManager& eventManager;
+
 public:
     Player& player1;
     Player& player2;
@@ -30,8 +30,9 @@ public:
         std::vector<std::shared_ptr<Creature>>,
         CreatureInitiativeComparator> InitiativeQueue;
 
-    Session(Player& p1, Player& p2, Grid& session_grid, GameEventManager& event_manager)
-        : player1(p1), player2(p2), SessionGrid(session_grid), eventManager(event_manager){}
+    Session(Player& p1, Player& p2, Grid& session_grid)
+        : player1(p1), player2(p2), SessionGrid(session_grid) {}
+
 
     void StartSession() {
         auto necromancer1 = std::make_shared<Necromancer>(&player1);
@@ -45,167 +46,30 @@ public:
 
         SessionGrid.PlaceCreature(0, 0, necromancer1);
         SessionGrid.PlaceCreature(SessionGrid.Width - 1, SessionGrid.Height - 1, necromancer2);
-        //while not lost, playrounds
+
         round_number = 1;
         isSessionActive = true;
-
     }
-
-    void UpdateSession() {
-        if (!isSessionActive) return;
-
-        //std::cout << "Round " << round_number << std::endl;
-        round_number++;
-        PlayRound();
-
-        auto winners = CheckDefeatConditions();
-        if (!winners.empty()) {
-            for (auto* winner : winners) {
-                std::cout << winner->Name << " wins the game!" << std::endl;
-            }
-            isSessionActive = false;  // Зупиняємо гру
-        }
-    }
-
     void PlayRound() {
-        if (!eventManager.HasEvents()) {
-            std::cout << "No events to process. Skipping round " << round_number << ".\n";
-            return;
-        }
-
-        std::cout << "Starting round " << round_number << "...\n";
-        // Додаємо монети гравцям
         player1.GiveCoin(1);
         player2.GiveCoin(1);
 
-        for (Player* player : { &player1, &player2 }) {
-            std::cout << player->Name << ", choose a creature to summon or skip:\n";
-
-            bool turnFinished = false;
-            while (!turnFinished) {
-                if (eventManager.HasEvents()) {
-                    GameEvent event = eventManager.GetNextEvent();
-                    std::cout << "Processing event: " << static_cast<int>(event) << std::endl;
-                    switch (event) {
-                    case GameEvent::SelectCell:
-                        std::cout << player->Name << " selected a cell.\n";
-                        turnFinished = true;
-                        break;
-                    case GameEvent::SkipTurn:
-                        std::cout << player->Name << " skipped the turn.\n";
-                        turnFinished = true;
-                        break;
-                    default:
-                        std::cout << "Unknown event.\n";
-                        break;
-                    }
-                }
-                else {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                }
-            }
-        }
-
+        //for each player
+        //wait for action
+        //only when actions receieved, go on
         InitializeInitiativeQueue();
 
-        /*
-        while (!InitiativeQueue.empty()) {
-            auto currentCreature = InitiativeQueue.top();
-            InitiativeQueue.pop();
-
-            if (currentCreature->HP > 0) {
-                PlayTurn();
-            }
-        }
-        */
+        ++round_number;
     }
-
-
-    void PlayRound2() {
-
-
-        std::cout << "Starting round" << round_number << "...\n";
-        //check win-lose condition (incoming)
-        //give coins
-        player1.GiveCoin(1);
-        player2.GiveCoin(1);
-
-        for (Player* player : { &player1, &player2 }) {
-            std::cout << player->Name << ", choose a creature to summon or skip:\n";
-
-            size_t maxWaitIterations = 10; // Максимальна кількість спроб
-            size_t currentIteration = 0;
-            //а може не 
-            bool turnFinished = false;
-            while (!turnFinished) {
-                if (eventManager.HasEvents()) {
-                    GameEvent event = eventManager.GetNextEvent();
-                    std::cout << "Processing event: " << static_cast<int>(event) << std::endl;
-                    switch (event) {
-                    case GameEvent::SelectCell:
-                        std::cout << player->Name << " selected a cell.\n";
-                        turnFinished = true;
-                        break;
-                    case GameEvent::SkipTurn:
-                        std::cout << player->Name << " skipped the turn.\n";
-                        turnFinished = true;
-                        break;
-                    default:
-                        std::cout << "Unknown event.\n";
-                        break;
-                    }
-                }
-                else {
-                   // std::cout << "Waiting for event...\n";
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                    if (++currentIteration > maxWaitIterations) {
-                     //   std::cerr << "No events received. Breaking loop to avoid infinite wait.\n";
-                        break;
-                    }
-                }
-            }
-        }
-
-        /*
-        for each player:
-            cout << choose creature
-            while no CreatureChosenReceived or SkipEvent:
-                do nothing, just wait
-        */
-        //once all players have placed creatures
-        //roll initiative for all creatures
-        //resolve initiative
-        //add all creatures to queue accordingly to initiative
-        
-        
-        
-        InitializeInitiativeQueue();
-
-
-
-        //for each creature in queue:
-            //run round
-
-
-    }
-
     void PlayTurn() {
-        //if dead, then skip and remove this creature
-        //cout << choose action: skip, move, hit
-        //if skip, then skip
-        //if hit or move, chose target cell
+        //wait for action
+        //only when action receieved, go on
     }
-
     void InitializeInitiativeQueue() {
-        InitiativeQueue = {};  // очищаємо чергу
+        InitiativeQueue = {};
         SessionGrid.RollInitiativeForAll();
 
         auto creatures = SessionGrid.GetAllCreatures();
-
-        // 4. Сортування за ініціативою
-        std::sort(creatures.begin(), creatures.end(), CreatureInitiativeComparator());
-
-        // Додаємо всіх до черги
         for (auto& creature : creatures) {
             InitiativeQueue.push(creature);
         }
@@ -215,7 +79,6 @@ public:
         bool player1HasNecromancer = false;
         bool player2HasNecromancer = false;
 
-        // Перевірка всіх клітинок на наявність некромантів
         for (int x = 0; x < SessionGrid.Width; ++x) {
             for (int y = 0; y < SessionGrid.Height; ++y) {
                 auto creature = SessionGrid.GetCell(x, y).CellTaker;
@@ -230,7 +93,6 @@ public:
             }
         }
 
-        // Формуємо результат поразки
         std::vector<Player*> winners;
         if (player1HasNecromancer && !player2HasNecromancer) {
             winners.push_back(&player1);
@@ -241,10 +103,9 @@ public:
 
         return winners;
     }
-
-
-
 };
+
+// Implementation details for Session
 
 /*
 new events I need:

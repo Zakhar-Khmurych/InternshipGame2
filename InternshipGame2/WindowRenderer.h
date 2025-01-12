@@ -1,6 +1,5 @@
 #pragma once
 
-#pragma once
 #include <iostream>
 #include <fstream>
 #include <SFML/Graphics.hpp>
@@ -8,43 +7,21 @@
 #include "TextureManager.h"
 #include "GameHandler.h"
 
-
-// to do list
-// keys moved away
-// green square separated
-// frame separated
-// time-based loop instead of timeless
-
-
-
-
 class WindowRenderer {
 
     int window_width;
     int window_height;
-    //InputHandler* inputHandler;
     GameHandler* gameHandler;
     TextureManager textureManager;
 
 public:
     WindowRenderer(int width, int height, GameHandler* game_handler)
-        : window_width(width), window_height(height), gameHandler(game_handler)
-    {
-    }
+        : window_width(width), window_height(height), gameHandler(game_handler) {}
 
     void RunTheGame() {
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Internship game");
         sf::Clock clock;
         Grid* currentGrid = gameHandler->GetGrid();
-
-        if (!currentGrid) {
-            std::cerr << "Error: currentGrid is nullptr!" << std::endl;
-            return;
-        }
-        if (currentGrid->Width == 0 || currentGrid->Height == 0) {
-            std::cerr << "Error: Grid size is invalid (0)!" << std::endl;
-            return;
-        }
 
         std::cout << "Grid Width: " << currentGrid->Width << " Grid Height: " << currentGrid->Height << std::endl;
 
@@ -52,7 +29,6 @@ public:
         textureManager.initializeAll();
 
         while (window.isOpen()) {
-
             sf::Event event;
             while (window.pollEvent(event)) {
                 if (event.type == sf::Event::Closed) {
@@ -60,16 +36,18 @@ public:
                 }
             }
 
-            GameEvent action = gameHandler->ProcessInput(window);
+           
+           GameEvent action = gameHandler->ProcessInput(window);
             if (action == GameEvent::Exit) {
                 window.close();
                 break;
             }
+           
 
             sf::Time elapsed = clock.restart();
             float deltaTime = elapsed.asSeconds();
 
-            gameHandler->UpdateGame();
+            //gameHandler->UpdateGame();
             window.clear();
 
             currentGrid = gameHandler->GetGrid();
@@ -77,8 +55,6 @@ public:
                 std::cerr << "Error: currentGrid is nullptr during game loop!" << std::endl;
                 break;
             }
-
-            //std::cout << "Grid Width: " << currentGrid->Width << " Grid Height: " << currentGrid->Height << std::endl;
 
             RenderTheField(window, *currentGrid);
             HighlightPlayerCreatures(window, *currentGrid);
@@ -142,4 +118,3 @@ public:
         }
     }
 };
-
