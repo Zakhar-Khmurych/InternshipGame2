@@ -166,11 +166,16 @@ public:
                 int moveX, moveY;
                 std::cout << "Enter target coordinates (x y) to move: ";
                 std::cin >> moveX >> moveY;
+                std::cout << moveX << moveY;
 
                 if (!SessionGrid.IsValidPosition(moveX, moveY)) {
                     std::cout << "Invalid target coordinates!" << std::endl;
                     continue;
                 }
+
+                std::cout << "Creature current position: ("
+                    << currentCreature->CurrentX << ", "
+                    << currentCreature->CurrentY << ")" << std::endl;
 
                 // Перевірка, чи є достатньо руху для переміщення
                 //if (currentCreature->MovementRemaining <= 0) {
@@ -179,15 +184,17 @@ public:
                 //}
 
                 // Видалення істоти зі старої клітинки
-                SessionGrid.RemoveCreature(currentCreature->CurrentX, currentCreature->CurrentY);
+                //
 
                 // Розміщуємо істоту на новій клітинці
-                SessionGrid.PlaceCreature(moveX, moveY, currentCreature);
+                //SessionGrid.PlaceCreature(moveX, moveY, currentCreature);
+                //SessionGrid.RemoveCreature(currentCreature->CurrentX, currentCreature->CurrentY);
+                 SessionGrid.MoveCreature(currentCreature->CurrentX, currentCreature->CurrentY, moveX, moveY, currentCreature);
 
                 // Оновлюємо координати істоти
-                currentCreature->CurrentX = moveX;
-                currentCreature->CurrentY = moveY;
-                currentCreature->MovementRemaining--; // Витрачаємо один бал руху
+                //currentCreature->CurrentX = moveX;
+                //currentCreature->CurrentY = moveY;
+  //              currentCreature->MovementRemaining--; // Витрачаємо один бал руху
 
                 std::cout << currentCreature->GetTextureName() << " moved to ("
                     << moveX << ", " << moveY << ")" << std::endl;

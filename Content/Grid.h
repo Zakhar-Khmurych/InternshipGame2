@@ -4,7 +4,7 @@
 #include "Creature.h"
 #include <vector>
 #include <queue>
-
+#include <iostream>
 
 class Grid {
 public:
@@ -31,12 +31,19 @@ public:
             Cell& cell = GetCell(x, y);
             if (cell.IsEmpty()) {
                 cell.CellTaker = creature;
+                creature->CurrentX = x;  // Set the creature's x-coordinate
+                creature->CurrentY = y;  // Set the creature's y-coordinate
             }
         }
     }
 
+
     Cell& GetCell(int x, int y) {
-        return Cells[x][y];
+        if (x < 0 || x >= Width || y < 0 || y >= Height) {
+            std::cerr << "Error: Invalid cell coordinates (" << x << ", " << y << ")." << std::endl;
+            throw std::out_of_range("Invalid grid coordinates");
+        }
+        return Cells[x][y]; // Accessing the cell
     }
 
     const Cell& GetCell(int x, int y) const {
@@ -114,6 +121,57 @@ public:
         }
         return creatures;
     }
+
+    void DrawGridInConsole() const {
+        for (int y = 0; y < Height; ++y) {
+            for (int x = 0; x < Width; ++x) {
+                const Cell& cell = Cells[x][y];
+
+                // Print '.' for empty cells and 'x' for taken cells
+                if (cell.IsEmpty()) {
+                    std::cout << ". ";  // Empty cell
+                }
+                else {
+                    std::cout << "x ";  // Taken cell
+                }
+            }
+            std::cout << std::endl;  // New line after each row
+        }
+    }
+
+    void MoveCreature(int startX, int startY, int destX, int destY, std::shared_ptr<Creature> creature) {
+        if (!creature) {
+            std::cerr << "Error: No creature provided to move." << std::endl;
+            return;
+        }
+
+        // Ensure the start cell contains the creature
+        if (Cells[startX][startY].CellTaker != creature) {
+            std::cerr << "Error: Creature is not in the start cell." << std::endl;
+            return;
+        }
+
+        // Remove the creature from the start cell
+        Cells[startX][startY].RemoveCreature();
+
+        // Ensure the destination cell is empty
+        if (Cells[destX][destY].IsEmpty()) {
+            // Place the creature in the destination cell
+            Cells[destX][destY].CellTaker = creature;
+
+            // Update the creature's internal coordinates after the move
+            creature->CurrentX = destX;
+            creature->CurrentY = destY;
+        }
+        else {
+            std::cerr << "Error: Destination cell is not empty." << std::endl;
+            // Optionally, return the creature to the start cell if needed
+            Cells[startX][startY].CellTaker = creature;
+        }
+    }
+
+
+
 
 
 };

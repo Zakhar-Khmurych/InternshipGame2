@@ -26,6 +26,7 @@ public:
         Grid* currentGrid = gameHandler->GetGrid();
 
         std::cout << "Grid Width: " << currentGrid->Width << " Grid Height: " << currentGrid->Height << std::endl;
+        currentGrid->DrawGridInConsole();
 
         textureManager.initializeInvalidTexture();
         textureManager.initializeAll();
@@ -41,9 +42,11 @@ public:
            
            GameEvent action = inputHandler.ProcessInput(window);
             if (action == GameEvent::Exit) {
+
                 window.close();
                 break;
             }
+            
            
 
             sf::Time elapsed = clock.restart();
@@ -129,5 +132,5 @@ public:
             }
         }
     }
-
+    
 };

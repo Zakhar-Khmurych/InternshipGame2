@@ -32,4 +32,18 @@ public:
             std::cout << "empty\n";
         }
     }
+    void MoveCreatureTo(Cell& targetCell) {
+        if (CellTaker == nullptr) {
+            std::cerr << "Error: No creature to move!" << std::endl;
+            return;
+        }
+
+        if (!targetCell.IsEmpty()) {
+            std::cerr << "Error: Target cell is not empty!" << std::endl;
+            return;
+        }
+        targetCell.CellTaker = CellTaker;
+        CellTaker.reset();
+    }
+
 };
